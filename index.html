@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=AR+One+Sans:wght@400;500;600;700&family=Croissant+One&family=Gabarito:wght@400;500;600;700;800;900&family=Mooli&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <title>Whats Up With This Water</title>
+</head>
+<body>
+    <header>
+        <img src="images/LG.png" alt="Logo2" class="NVTCLOGOHEADER">
+        <a class="logo">Whats Up With This Water</a>
+    </header>
+    <section class="main">
+        <a class="location"><i class="fa-solid fa-location-dot"></i></a>
+        <div>
+            <h3>My Location</h3>
+            <div class="container">
+                <h1>Location Information</h1>
+                <div class="location-info" id="location">Loading...</div>
+                <div class="time-info" id="time"><img class="icon" id="icon" src="" alt="">Loading...</div>
+            </div>
+        
+            <script>
+                function getLocation() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(showLocation, showError);
+                    } else {
+                        showError("Geolocation is not supported by this browser.");
+                    }
+                }
+        
+                function showLocation(position) {
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+        
+                    var apiUrl = "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=" + latitude + "&longitude=" + longitude + "&localityLanguage=en";
+        
+                    fetch(apiUrl)
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function(data) {
+                            var country = data.countryName;
+                            var town = data.locality;
+        
+                            var locationElement = document.getElementById("location");
+                            locationElement.innerHTML = "Country: " + country + "<br>Town: " + town;
+        
+                            // Get current time
+                            var currentTime = new Date();
+                            var hours = currentTime.getHours();
+        
+                            var timeElement = document.getElementById("time");
+                            var iconElement = document.getElementById("icon");
+        
+                            if (hours >= 6 && hours < 18) {
+                                timeElement.innerHTML = "Time: " + currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + " (Morning)";
+                                iconElement.src = "sun-icon.png";
+                                iconElement.alt = "Sun Icon";
+                            } else {
+                                timeElement.innerHTML = "Time: " + currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + " (Night)";
+                                iconElement.src = "moon-icon.png";
+                                iconElement.alt = "Moon Icon";
+                            }
+                        })
+                        .catch(function(error) {
+                            console.log("Error:", error);
+                        });
+                }
+        
+                function showError(error) {
+                    console.log("Error:", error);
+                    var locationElement = document.getElementById("location");
+                    locationElement.innerHTML = "Error: " + error;
+                }
+        
+                getLocation();
+            </script>
+        
+        </div>
+    </section>
+
+    <section class="cards" id="services">
+        <h2 class="title">Weather App</h2>
+        <div class="content">
+            <div class="card">
+                <div class="icon">
+                    <i class="fa-solid fa-temperature-half"></i>
+                </div>
+                <div class="info">
+                    <h3>Weather App</h3>
+                    <section class="weather_section layout_padding">
+                        <div class="weather-info centered" id="weather-info">
+
+                            <p><strong>Temperature:</strong> <span id="temperature"></span>°C</p>
+                            <p><strong>Humidity:</strong> <span id="humidity"></span>%</p>
+                            <p><strong>Description:</strong> <span id="description"></span></p>
+                        </div>
+                    
+                        <script>
+                            // Replace 'YOUR_API_KEY' with your actual API key
+                            const apiKey = 'http://api.openweathermap.org/data/2.5/weather?q=London&appid=f63f350c0f61b5849e18b9963a74e2df&units=metric';
+                           
+                            const temperatureElement = document.getElementById('temperature');
+                            const humidityElement = document.getElementById('humidity');
+                            const descriptionElement = document.getElementById('description');
+                    
+                            function getWeather() {
+                                const url = `https://api.openweathermap.org/data/2.5/weather?q=Bahrain&appid=f63f350c0f61b5849e18b9963a74e2df&units=metric`;
+                           
+                                fetch(url)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.cod === 200) {
+                                            temperatureElement.textContent = data.main.temp;
+                                            humidityElement.textContent = data.main.humidity;
+                                            descriptionElement.textContent = data.weather[0].description;
+                                        } else {
+                                            temperatureElement.textContent = 'N/A';
+                                            humidityElement.textContent = 'N/A';
+                                            descriptionElement.textContent = 'N/A';
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.log('Error:', error);
+                                    });
+                            }
+                    
+                            getWeather();
+                        </script>
+                    </section>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="aboutus">
+        <h2 class="h2aboutus">About Us</h2>
+        <h5 class="h5aboutus">Type here</h5>
+    </section>
+</body>
+</html>
